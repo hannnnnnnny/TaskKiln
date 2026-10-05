@@ -1,4 +1,4 @@
-﻿//! End-to-end scheduler tests against a protocol-compatible fake Claude CLI
+//! End-to-end scheduler tests against a protocol-compatible fake Claude CLI
 //! (tests/fixtures/fake_claude.cjs). Requires `node` and `git` on PATH;
 //! skipped otherwise.
 
