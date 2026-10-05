@@ -14,7 +14,7 @@ export function HistoryPanel({ snapshot, onOpenLog }: { snapshot: Snapshot; onOp
   const run = useApp((s) => s.run);
   const tasks = historyTasks(snapshot.tasks);
   return (
-    <Panel title={<span className="flex items-center gap-3">History <span className="text-muted">{tasks.length}</span></span>} bodyClassName="overflow-auto">
+    <Panel className="h-full" title={<span className="flex items-center gap-3">History <span className="text-muted">{tasks.length}</span></span>} bodyClassName="overflow-auto">
       {tasks.length === 0 ? (
         <EmptyState title="No history yet">Completed, failed, and overridden tasks are recorded here with their validation result.</EmptyState>
       ) : (

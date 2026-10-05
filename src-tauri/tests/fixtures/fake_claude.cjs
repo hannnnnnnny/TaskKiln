@@ -23,7 +23,17 @@ if (args[0] === "auth") {
   process.exit(0);
 }
 
-const emit = (obj) => process.stdout.write(JSON.stringify(obj) + "\n");
+// Optional per-step delay for manual UI walkthroughs: write a number of
+// milliseconds to <tmpdir>/taskkiln_fake_delay_ms.
+const delayFile = path.join(require("os").tmpdir(), "taskkiln_fake_delay_ms");
+const DELAY = fs.existsSync(delayFile) ? Number(fs.readFileSync(delayFile, "utf8")) || 0 : 0;
+const pause = () => {
+  if (DELAY) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, DELAY);
+};
+const emit = (obj) => {
+  pause();
+  process.stdout.write(JSON.stringify(obj) + "\n");
+};
 const session = flag("--session-id") || flag("--resume") || "ephemeral";
 const schema = flag("--json-schema") || "";
 const text = (t) => emit({ type: "assistant", message: { content: [{ type: "text", text: t }] } });

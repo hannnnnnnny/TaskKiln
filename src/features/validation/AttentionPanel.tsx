@@ -34,8 +34,8 @@ function FindingRows({ findings }: { findings: Finding[] }) {
   return (
     <ul className="space-y-1.5">
       {relevant.slice(0, 8).map((f, i) => (
-        <li key={i} className="grid grid-cols-[72px_1fr] gap-3 font-mono text-[12px]">
-          <span className={cx("uppercase", f.severity === "fail" ? "text-err" : "text-warn")}>
+        <li key={i} className="grid grid-cols-[132px_1fr] gap-3 font-mono text-[12px]">
+          <span className={cx("whitespace-nowrap uppercase", f.severity === "fail" ? "text-err" : "text-warn")}>
             {f.severity === "fail" ? "FAIL" : "WARN"} · {f.source}
           </span>
           <span className="break-words text-fg/90">{f.message}</span>

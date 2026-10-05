@@ -37,7 +37,7 @@ export function CurrentTask({ snapshot, onOpenLog }: { snapshot: Snapshot; onOpe
   if (!task) {
     const queued = snapshot.tasks.some((t) => t.status === "QUEUED");
     return (
-      <Panel title="Current task">
+      <Panel title="Current task" className="flex-1">
         {queue.queue_complete ? (
           <EmptyState title="■ Queue complete" tone="ok">
             Every queued task finished and passed validation (or was explicitly overridden).
@@ -76,6 +76,7 @@ export function CurrentTask({ snapshot, onOpenLog }: { snapshot: Snapshot; onOpe
         </span>
       }
       right={<StateTag tone={statusTone(task.status)}>{statusLabel(task.status)}</StateTag>}
+      className="flex-1"
       bodyClassName="overflow-y-auto"
     >
       <div className="tk-readout space-y-5 p-4">
@@ -83,7 +84,7 @@ export function CurrentTask({ snapshot, onOpenLog }: { snapshot: Snapshot; onOpe
           <h3 className="text-[19px] font-semibold leading-snug tracking-tight">{task.title}</h3>
           <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-muted">
             <span>{project?.name ?? "unknown project"}</span>
-            {task.started_at && <span>elapsed {taskDuration(task)}</span>}
+            {task.started_at && active && <span>elapsed {taskDuration(task)}</span>}
             {task.fix_attempts > 0 && <span>fix rounds {task.fix_attempts}</span>}
             {task.claude_session_id && <span title={task.claude_session_id}>session {task.claude_session_id.slice(0, 8)}</span>}
           </div>
