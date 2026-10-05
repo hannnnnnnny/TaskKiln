@@ -123,6 +123,10 @@ fn parse_result(v: &Value) -> RunResult {
 
 /// One-line description of a tool call for the CURRENT ACTIVITY display.
 pub fn summarize_tool(name: &str, input: &Value) -> String {
+    // The CLI's --json-schema mechanism surfaces as a tool call; describe it plainly.
+    if name == "StructuredOutput" {
+        return "writing structured report".into();
+    }
     let field = |k: &str| input.get(k).and_then(Value::as_str);
     let detail = field("file_path")
         .or_else(|| field("command"))

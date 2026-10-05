@@ -59,6 +59,8 @@ Inspect the relevant parts of the codebase (read-only), then produce a concise e
 3 to 8 checkpoints. Each checkpoint is a concrete, verifiable step (e.g. \"inspect current auth flow\", \
 \"add comments table migration\", \"run test suite\"). Give each a weight from 1 (trivial) to 5 (largest), \
 proportional to expected effort. Include a testing checkpoint when tests exist.\n\
+Do not plan steps for committing, pushing, or other git history changes: you will not be allowed to \
+do them; the user reviews and commits the working tree.\n\
 Return the plan in the required structured output.",
         context_block(ctx),
         task_block(task)
@@ -221,6 +223,14 @@ mod tests {
         assert!(p.contains("TASKKILN_CHECKPOINT_START N"));
         assert!(p.contains("Inspect the existing code"));
         assert!(p.contains("minimal changes"));
+    }
+
+    #[test]
+    fn plan_prompt_rules_out_git_history_steps() {
+        let ctx = ProjectContext { name: "demo", path: "/x", is_git_repo: true, commands: &[] };
+        let p = plan_prompt(&ctx, &task());
+        assert!(p.contains("Do not modify any files"));
+        assert!(p.contains("Do not plan steps for committing"));
     }
 
     #[test]
