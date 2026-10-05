@@ -29,7 +29,10 @@ function headline(task: Task): { title: string; tone: "err" | "warn" } {
 }
 
 function FindingRows({ findings }: { findings: Finding[] }) {
-  const relevant = findings.filter((f) => f.severity !== "info");
+  // Failures first: they are what blocked the queue.
+  const relevant = findings
+    .filter((f) => f.severity !== "info")
+    .sort((a, b) => Number(b.severity === "fail") - Number(a.severity === "fail"));
   if (relevant.length === 0) return null;
   return (
     <ul className="space-y-1.5">
