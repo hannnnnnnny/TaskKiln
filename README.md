@@ -175,7 +175,7 @@ src-tauri/src/
 - On Windows, a child is attached to its Job Object right after spawning, so grandchildren started within the first few milliseconds could in theory escape it.
 - On macOS/Linux, a TaskKiln *crash* (rather than a normal stop or exit) can leave a Claude process running. The task is still flagged INTERRUPTED on restart.
 - Resuming an interrupted task continues its Claude session but cannot recover output lost while TaskKiln was down.
-- If the only Claude Code CLI available is the copy bundled inside the Claude desktop app, it must be signed in separately (`"<path>\claude.exe" auth login`). The system check shows the exact command.
+- If the only Claude Code CLI available is the copy bundled inside the Claude desktop app, it must be signed in separately (`"<path>\claude.exe" auth login`). The system check shows the exact command. With the Microsoft Store build of the desktop app, that copy lives under `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude-code\`, which TaskKiln also searches. Installing the standalone CLI is more robust, because desktop-app updates replace the bundled copy.
 - Validation can only be as good as the project's own build and tests, plus a model-based review. Treat PASS as strong evidence, not proof.
 - Linux is untested.
 
