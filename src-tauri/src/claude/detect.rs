@@ -92,6 +92,9 @@ pub fn candidate_paths(env: &SearchEnv) -> Vec<PathBuf> {
         }
         if let Some(local) = &env.localappdata {
             out.push(local.join("Programs").join("claude").join(exe));
+            // The Microsoft Store (MSIX) build of the desktop app keeps its
+            // AppData under a per-package redirect that only its own processes see.
+            out.extend(msix_desktop_cli(&local.join("Packages"), exe));
         }
     } else {
         out.push(PathBuf::from("/opt/homebrew/bin/claude"));
@@ -121,6 +124,19 @@ fn bundled_desktop_cli(root: &Path, exe: &str) -> Vec<PathBuf> {
     }
     found.sort_by(|a, b| b.0.cmp(&a.0));
     found.into_iter().map(|(_, p)| p).collect()
+}
+
+/// `<Packages>/Claude_<publisher>/LocalCache/Roaming/Claude/claude-code/...`
+fn msix_desktop_cli(packages: &Path, exe: &str) -> Vec<PathBuf> {
+    let Ok(entries) = std::fs::read_dir(packages) else { return vec![] };
+    entries
+        .flatten()
+        .filter(|e| e.file_name().to_string_lossy().starts_with("Claude_"))
+        .flat_map(|e| {
+            let root = e.path().join("LocalCache").join("Roaming").join("Claude").join("claude-code");
+            bundled_desktop_cli(&root, exe)
+        })
+        .collect()
 }
 
 fn version_key(s: &str) -> Vec<u64> {
@@ -262,6 +278,19 @@ mod tests {
         let found = bundled_desktop_cli(dir.path(), exe);
         assert_eq!(found.len(), 3);
         assert!(found[0].to_string_lossy().contains("2.1.284"));
+    }
+
+    #[test]
+    fn finds_msix_packaged_desktop_cli() {
+        let dir = tempfile::tempdir().unwrap();
+        let exe = if cfg!(windows) { "claude.exe" } else { "claude" };
+        let d = dir.path().join("Claude_pzs8sxrjxfjjc/LocalCache/Roaming/Claude/claude-code/2.1.286/abc");
+        std::fs::create_dir_all(&d).unwrap();
+        std::fs::write(d.join(exe), b"").unwrap();
+        std::fs::create_dir_all(dir.path().join("SomethingElse_123")).unwrap();
+        let found = msix_desktop_cli(dir.path(), exe);
+        assert_eq!(found.len(), 1);
+        assert!(found[0].to_string_lossy().contains("2.1.286"));
     }
 
     #[test]
