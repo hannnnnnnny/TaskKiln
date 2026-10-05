@@ -4,6 +4,7 @@ pub mod error;
 pub mod logging;
 pub mod models;
 pub mod process;
+pub mod scheduler;
 pub mod validation;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

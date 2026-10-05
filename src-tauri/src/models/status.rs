@@ -74,11 +74,12 @@ impl TaskStatus {
             Running => matches!(next, Testing | Validating | NeedsUser | Failed | Paused),
             Testing => matches!(next, Validating | NeedsUser | Failed | Paused),
             Validating => matches!(next, Completed | NeedsUser | Failed | Paused),
+            // Planning is reachable again only to resume a task interrupted before it had a plan.
             NeedsUser => matches!(
                 next,
-                Running | Testing | Validating | Completed | Failed | Queued | Paused | Cancelled
+                Planning | Running | Testing | Validating | Completed | Failed | Queued | Paused | Cancelled
             ),
-            Paused => matches!(next, Queued | Running | Failed | Cancelled | NeedsUser),
+            Paused => matches!(next, Queued | Planning | Running | Testing | Failed | Cancelled),
             Failed => matches!(next, Queued | Cancelled),
             Completed | Cancelled => false,
         }

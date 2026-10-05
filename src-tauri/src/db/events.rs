@@ -54,6 +54,18 @@ impl Db {
         Ok(rows.collect::<Result<_, _>>()?)
     }
 
+    pub fn latest_event_of_kind(&self, task_id: &str, kind: &str) -> AppResult<Option<TaskEvent>> {
+        use rusqlite::OptionalExtension;
+        Ok(self
+            .conn()
+            .query_row(
+                "SELECT * FROM task_events WHERE task_id = ?1 AND kind = ?2 ORDER BY id DESC LIMIT 1",
+                params![task_id, kind],
+                row_to_event,
+            )
+            .optional()?)
+    }
+
     pub fn add_log(&self, task_id: &str, stream: &str, line: &str) -> AppResult<LogLine> {
         let ts = now();
         self.conn().execute(

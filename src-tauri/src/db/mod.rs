@@ -71,4 +71,4 @@ fn json_vec(raw: String) -> AppResult<Vec<String>> {
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

@@ -196,7 +196,16 @@ pub async fn probe(custom: &str) -> ClaudeStatus {
         ..Default::default()
     };
     match run(&["--version"]).await {
-        Ok(out) => status.version = parse_version(&out.stdout),
+        Ok(out) if out.outcome.success => status.version = parse_version(&out.stdout),
+        Ok(out) => {
+            status.found = false;
+            status.error = Some(format!(
+                "{} did not run correctly: {}",
+                path.display(),
+                crate::logging::truncate(out.stderr.trim(), 300)
+            ));
+            return status;
+        }
         Err(e) => {
             status.found = false;
             status.error = Some(format!("Found {} but it could not be started: {e}", path.display()));
