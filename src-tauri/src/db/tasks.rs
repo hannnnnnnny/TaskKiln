@@ -290,6 +290,20 @@ impl Db {
         Ok(())
     }
 
+    pub fn set_git_baseline(&self, id: &str, baseline: &str) -> AppResult<()> {
+        self.conn()
+            .execute("UPDATE tasks SET git_baseline = ?2 WHERE id = ?1", params![id, baseline])?;
+        Ok(())
+    }
+
+    pub fn git_baseline(&self, id: &str) -> AppResult<Option<String>> {
+        Ok(self
+            .conn()
+            .query_row("SELECT git_baseline FROM tasks WHERE id = ?1", [id], |r| r.get(0))
+            .optional()?
+            .flatten())
+    }
+
     pub fn increment_fix_attempts(&self, id: &str) -> AppResult<()> {
         self.conn()
             .execute("UPDATE tasks SET fix_attempts = fix_attempts + 1 WHERE id = ?1", [id])?;

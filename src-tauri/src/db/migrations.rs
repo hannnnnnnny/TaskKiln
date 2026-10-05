@@ -96,6 +96,11 @@ const MIGRATIONS: &[&str] = &[
         value  TEXT NOT NULL
     );
     "#,
+    // 2: snapshot of dirty files when a task first starts, used to attribute
+    //    changes to the task rather than to pre-existing local edits.
+    r#"
+    ALTER TABLE tasks ADD COLUMN git_baseline TEXT;
+    "#,
 ];
 
 pub fn run(conn: &Connection) -> AppResult<()> {
