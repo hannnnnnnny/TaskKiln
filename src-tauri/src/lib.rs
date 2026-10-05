@@ -1,7 +1,9 @@
+pub mod claude;
 pub mod db;
 pub mod error;
 pub mod logging;
 pub mod models;
+pub mod process;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
